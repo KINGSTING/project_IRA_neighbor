@@ -1,0 +1,15 @@
+country,iso3,region,year,score,rank,sources,standardError,lowerCi,upperCi
+Philippines,PHL,AP,2025,32,120,9,2.14,28,36
+Philippines,PHL,AP,2024,33,114,9,1.81,30,36
+Philippines,PHL,AP,2023,34,115,9,1.21,32,36
+Philippines,PHL,AP,2022,33,116,9,0.93,31,35
+Philippines,PHL,AP,2021,33,117,9,0.94,31,35
+Philippines,PHL,AP,2020,34,115,9,0.92,32,36
+Philippines,PHL,AP,2019,34,113,9,1.59,31,37
+Philippines,PHL,AP,2018,36,99,9,1.55,33,39
+Philippines,PHL,AP,2017,34,111,9,1.90,31,37
+Philippines,PHL,AP,2016,35,101,9,1.58,33,38
+Philippines,PHL,AP,2015,35,95,8,1.92,32,38
+Philippines,PHL,AP,2014,38,85,8,1.84,35,41
+Philippines,PHL,AP,2013,36,94,9,2.50,32,40
+Philippines,PHL,AP,2012,34,105,9,2.20,30,37
