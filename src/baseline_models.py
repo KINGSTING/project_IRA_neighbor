@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """
 Baseline Models for POL-SPILL Comparison
-- Panel Fixed Effects (FE) with province and year dummies (using sklearn)
-- Simple MLP (no spatial info)
-- Plain GCN (same encoder as our model, no disentangler)
-- Spatial Lag Model (SAR) using spreg if available
+- Panel Fixed Effects (FE) with province and year dummies
+- Simple MLP (no spatial)
+- Plain GCN (spatial but no disentanglement)
+- Our full Graph VAE
+All models use standardized features for fair comparison.
 """
 
 import os
@@ -25,11 +26,12 @@ warnings.filterwarnings('ignore')
 # ============================================================
 DATA_DIR = "/home/jemarjohn/Documents/Research/project_IRA_neighbor/data"
 NPZ_PATH = os.path.join(DATA_DIR, "processed_data.npz")
+CHECKPOINT_PATH = os.path.join(DATA_DIR, "model_checkpoint.pt")
 RESULT_PATH = os.path.join(DATA_DIR, "baseline_results.csv")
 DEVICE = torch.device('cpu')
 
 # ============================================================
-# LOAD DATA
+# LOAD AND STANDARDIZE DATA
 # ============================================================
 print("Loading processed data...")
 data = np.load(NPZ_PATH, allow_pickle=True)
@@ -37,40 +39,45 @@ X_train = data['X_train']   # (77, 25, 20)
 X_val = data['X_val']       # (77, 1, 20)
 X_test = data['X_test']     # (77, 1, 20)
 A = data['A']               # (77, 77)
+provinces = data['provinces']
 feature_names = data['feature_names']
 
 n_prov, n_years_train, n_feat = X_train.shape
 
-# Prepare panel data for FE: use all province-year pairs (t -> t+1)
-# We'll create a list of (current, next) for each province and year t (1992-2015)
+# Standardize features (same as model.py)
+scaler = StandardScaler()
+X_train_flat = X_train.reshape(-1, n_feat)
+scaler.fit(X_train_flat)
+X_train_norm = scaler.transform(X_train_flat).reshape(n_prov, n_years_train, n_feat)
+X_val_norm = scaler.transform(X_val.reshape(-1, n_feat)).reshape(X_val.shape)
+X_test_norm = scaler.transform(X_test.reshape(-1, n_feat)).reshape(X_test.shape)
+
+# Prepare panel data for FE: current -> next for each province and year t (1992-2015)
 current_list = []
 next_list = []
 prov_ids = []
 year_ids = []
 for p in range(n_prov):
     for t in range(n_years_train - 1):
-        current_list.append(X_train[p, t, :])
-        next_list.append(X_train[p, t+1, :])
+        current_list.append(X_train_norm[p, t, :])
+        next_list.append(X_train_norm[p, t+1, :])
         prov_ids.append(p)
-        year_ids.append(t)  # relative year index
-current = np.array(current_list)  # (77*24, 20)
-next_vals = np.array(next_list)   # (77*24, 20)
+        year_ids.append(t)
+current = np.array(current_list)      # (77*24, 20)
+next_vals = np.array(next_list)       # (77*24, 20)
 
 # Validation: use 2016 (last train year) to predict 2019
-val_current = X_train[:, -1, :]   # (77, 20)
-val_target = X_val[:, 0, :]       # (77, 20)
+val_current = X_train_norm[:, -1, :]  # (77, 20)
+val_target = X_val_norm[:, 0, :]      # (77, 20)
 
 # ============================================================
-# 1. PANEL FIXED EFFECTS (using OneHot + LinearRegression)
+# 1. PANEL FIXED EFFECTS
 # ============================================================
 print("\n[1] Training Panel Fixed Effects model...")
-# Create dummy variables for province and year
 prov_dummies = pd.get_dummies(pd.Series(prov_ids), prefix='prov')
 year_dummies = pd.get_dummies(pd.Series(year_ids), prefix='year')
-# Convert current features to DataFrame with string column names
 current_df = pd.DataFrame(current, columns=[f'x{i}' for i in range(n_feat)])
 X_fe = pd.concat([prov_dummies, year_dummies, current_df], axis=1)
-# Ensure all column names are strings
 X_fe.columns = X_fe.columns.astype(str)
 y_fe = pd.DataFrame(next_vals, columns=[f'y{i}' for i in range(n_feat)])
 
@@ -83,14 +90,13 @@ val_year_dummies = pd.get_dummies(pd.Series([n_years_train-1]*n_prov), prefix='y
 val_current_df = pd.DataFrame(val_current, columns=[f'x{i}' for i in range(n_feat)])
 X_val_fe = pd.concat([val_prov_dummies, val_year_dummies, val_current_df], axis=1)
 X_val_fe.columns = X_val_fe.columns.astype(str)
-# Align columns
 X_val_fe = X_val_fe.reindex(columns=X_fe.columns, fill_value=0)
 pred_fe = model_fe.predict(X_val_fe)
 mse_val_fe = mean_squared_error(val_target, pred_fe)
-print(f"  Validation MSE (FE): {mse_val_fe:.4f}")
+print(f"  Validation MSE (FE): {mse_val_fe:.6f}")
 
 # ============================================================
-# 2. SIMPLE MLP (no spatial info)
+# 2. MLP BASELINE
 # ============================================================
 print("\n[2] Training MLP baseline...")
 class MLP(nn.Module):
@@ -106,7 +112,6 @@ class MLP(nn.Module):
         x = F.relu(self.bn2(self.fc2(x)))
         return self.fc3(x)
 
-# Convert to tensors
 X_train_t = torch.FloatTensor(current).to(DEVICE)
 y_train_t = torch.FloatTensor(next_vals).to(DEVICE)
 X_val_t = torch.FloatTensor(val_current).to(DEVICE)
@@ -125,17 +130,17 @@ for epoch in range(200):
     torch.nn.utils.clip_grad_norm_(model_mlp.parameters(), 1.0)
     optimizer.step()
     if (epoch+1) % 50 == 0:
-        print(f"  Epoch {epoch+1}: Train Loss = {loss.item():.4f}")
+        print(f"  Epoch {epoch+1}: Train Loss = {loss.item():.6f}")
 model_mlp.eval()
 with torch.no_grad():
     pred_val = model_mlp(X_val_t)
     mse_val_mlp = loss_fn(pred_val, y_val_t).item()
-print(f"  Validation MSE (MLP): {mse_val_mlp:.4f}")
+print(f"  Validation MSE (MLP): {mse_val_mlp:.6f}")
 
 # ============================================================
-# 3. PLAIN GCN (no disentanglement, but with spatial info)
+# 3. PLAIN GCN (spatial, no disentanglement)
 # ============================================================
-print("\n[3] Training Plain GCN (no disentanglement)...")
+print("\n[3] Training Plain GCN...")
 class PlainGCN(nn.Module):
     def __init__(self, in_dim, hidden_dim, out_dim):
         super().__init__()
@@ -147,13 +152,12 @@ class PlainGCN(nn.Module):
         x = self.conv2(x, edge_index)
         return x
 
-# Prepare data for GCN: use all training years sequentially (like the VAE)
-X_full_train = torch.FloatTensor(X_train).to(DEVICE)  # (77, 25, 20)
+X_full_train = torch.FloatTensor(X_train_norm).to(DEVICE)  # (77, 25, 20)
 A_t = torch.FloatTensor(A).to(DEVICE)
 edge_index = torch.nonzero(A_t, as_tuple=False).t().contiguous()
 
 model_gcn = PlainGCN(n_feat, 64, n_feat).to(DEVICE)
-optimizer = torch.optim.Adam(model_gcn.parameters(), lr=1e-4)  # lower LR
+optimizer = torch.optim.Adam(model_gcn.parameters(), lr=1e-4)
 loss_fn = nn.MSELoss()
 
 for epoch in range(300):
@@ -171,60 +175,53 @@ for epoch in range(300):
     torch.nn.utils.clip_grad_norm_(model_gcn.parameters(), 1.0)
     optimizer.step()
     if (epoch+1) % 100 == 0:
-        print(f"  Epoch {epoch+1}: Train Loss = {avg_loss.item():.4f}")
+        print(f"  Epoch {epoch+1}: Train Loss = {avg_loss.item():.6f}")
 
 model_gcn.eval()
 with torch.no_grad():
-    val_pred_gcn = model_gcn(X_full_train[:, -1, :], edge_index)  # 2016 -> 2019
+    val_pred_gcn = model_gcn(X_full_train[:, -1, :], edge_index)
     mse_val_gcn = loss_fn(val_pred_gcn, torch.FloatTensor(val_target).to(DEVICE)).item()
-print(f"  Validation MSE (Plain GCN): {mse_val_gcn:.4f}")
+print(f"  Validation MSE (Plain GCN): {mse_val_gcn:.6f}")
 
 # ============================================================
-# 4. SPATIAL LAG MODEL (SAR) using spreg (if available)
+# 4. OUR FULL MODEL (load from checkpoint)
 # ============================================================
-try:
-    import libpysal as lp
-    from spreg import ML_Lag
-    print("\n[4] Training Spatial Lag Model (SAR)...")
-    # Build weight matrix from A
-    w = lp.weights.W(lp.weights.util.full2W(A))
-    # Use 2016 features to predict 2019 features (average over features)
-    # SAR is univariate, so we predict each target feature separately and average MSE.
-    mse_sar_list = []
-    for i in range(n_feat):
-        y = val_target[:, i]
-        X_sar = val_current
-        model_sar = ML_Lag(y, X_sar, w=w, method='full', name_y=f'y{i}', name_x=[f'x{j}' for j in range(n_feat)])
-        pred_sar = model_sar.predy
-        mse_sar_list.append(mean_squared_error(y, pred_sar))
-    mse_val_sar = np.mean(mse_sar_list)
-    print(f"  Validation MSE (SAR, averaged): {mse_val_sar:.4f}")
-except ImportError:
-    print("\n[4] Spatial Lag Model skipped (spreg not installed)")
-    mse_val_sar = np.nan
-except Exception as e:
-    print(f"\n[4] SAR failed: {e}")
-    mse_val_sar = np.nan
+print("\n[4] Loading our full model from checkpoint...")
+# Import the model class from model.py
+import importlib.util
+spec = importlib.util.spec_from_file_location("model", "model.py")
+model_module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(model_module)
+CausalGraphVAE = model_module.CausalGraphVAE
+
+checkpoint = torch.load(CHECKPOINT_PATH, map_location=DEVICE)
+config = checkpoint['config']
+model_ours = CausalGraphVAE(
+    in_dim=config['in_dim'],
+    hidden_dim=config['hidden_dim'],
+    latent_dim=config['latent_dim'],
+    direct_dim=config['direct_dim'],
+    spillover_dim=config['spillover_dim'],
+    confounder_dim=config['confounder_dim'],
+    A=A_t
+).to(DEVICE)
+model_ours.load_state_dict(checkpoint['model_state_dict'])
+model_ours.eval()
+
+# Evaluate on validation set
+with torch.no_grad():
+    x_val_in = torch.FloatTensor(X_train_norm[:, -1, :]).to(DEVICE)  # 2016
+    y_val_true = torch.FloatTensor(val_target).to(DEVICE)
+    x_val_recon, _, _, _, _, _ = model_ours(x_val_in, edge_index)
+    mse_val_ours = loss_fn(x_val_recon, y_val_true).item()
+print(f"  Validation MSE (Our Graph VAE): {mse_val_ours:.6f}")
 
 # ============================================================
-# 5. OUR FULL MODEL (load validation loss from training)
-# ============================================================
-print("\n[5] Loading our full model's validation MSE...")
-try:
-    effects_full = np.load(os.path.join(DATA_DIR, "causal_effects.npz"), allow_pickle=True)
-    val_losses = effects_full['val_losses']
-    best_val_mse = min(val_losses)  # best validation MSE during training
-    print(f"  Our model best validation MSE: {best_val_mse:.4f}")
-except Exception as e:
-    print(f"  Failed to load: {e}")
-    best_val_mse = np.nan
-
-# ============================================================
-# SAVE RESULTS TABLE
+# SAVE RESULTS
 # ============================================================
 results = pd.DataFrame({
-    'Model': ['Panel FE', 'MLP (no spatial)', 'Plain GCN', 'Spatial Lag (SAR)', 'Our Graph VAE (full)'],
-    'Validation MSE': [mse_val_fe, mse_val_mlp, mse_val_gcn, mse_val_sar, best_val_mse]
+    'Model': ['Panel FE', 'MLP (no spatial)', 'Plain GCN', 'Our Graph VAE'],
+    'Validation MSE': [mse_val_fe, mse_val_mlp, mse_val_gcn, mse_val_ours]
 })
 results.to_csv(RESULT_PATH, index=False)
 print("\n" + results.to_string())
