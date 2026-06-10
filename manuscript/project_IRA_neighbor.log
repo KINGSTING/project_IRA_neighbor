@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.3.23)  10 JUN 2026 14:26
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.3.23)  10 JUN 2026 17:53
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -463,48 +463,60 @@ File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 LaTeX Font Info:    Trying to load font information for U+msb on input line 34.
  (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-) [1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}
+)
+Underfull \hbox (badness 2547) in paragraph at lines 58--59
+[]\OT1/ptm/m/n/10 The first di-rected in-flu-ence map of fiscal-electoral
+ []
+
+[1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}
 
 
-]
-<../data/figures/fig1_direct_effect_map.png, id=139, 379.6584pt x 596.7093pt>
+] [2]
+<../data/figures/traversal_METRO_MANILA.png, id=167, 1084.05pt x 867.24pt>
+File: ../data/figures/traversal_METRO_MANILA.png Graphic file (type png)
+<use ../data/figures/traversal_METRO_MANILA.png>
+Package pdftex.def Info: ../data/figures/traversal_METRO_MANILA.png  used on input line 191.
+(pdftex.def)             Requested size: 226.79846pt x 181.43765pt.
+<../data/figures/fig1_direct_effect_map.png, id=170, 379.6584pt x 596.7093pt>
 File: ../data/figures/fig1_direct_effect_map.png Graphic file (type png)
 <use ../data/figures/fig1_direct_effect_map.png>
-Package pdftex.def Info: ../data/figures/fig1_direct_effect_map.png  used on input line 163.
+Package pdftex.def Info: ../data/figures/fig1_direct_effect_map.png  used on input line 201.
 (pdftex.def)             Requested size: 226.79846pt x 356.45317pt.
-<../data/figures/fig2_spillover_bars.png, id=142, 1001.1804pt x 423.0204pt>
+<../data/figures/fig2_spillover_bars.png, id=172, 1001.1804pt x 423.0204pt>
 File: ../data/figures/fig2_spillover_bars.png Graphic file (type png)
 <use ../data/figures/fig2_spillover_bars.png>
-Package pdftex.def Info: ../data/figures/fig2_spillover_bars.png  used on input line 173.
+Package pdftex.def Info: ../data/figures/fig2_spillover_bars.png  used on input line 211.
 (pdftex.def)             Requested size: 252.0pt x 106.47131pt.
- [2]
-<../data/figures/fig3_spillover_network.png, id=160, 445.665pt x 699.0918pt>
+<../data/figures/fig3_spillover_network.png, id=174, 445.665pt x 699.0918pt>
 File: ../data/figures/fig3_spillover_network.png Graphic file (type png)
 <use ../data/figures/fig3_spillover_network.png>
-Package pdftex.def Info: ../data/figures/fig3_spillover_network.png  used on input line 183.
+Package pdftex.def Info: ../data/figures/fig3_spillover_network.png  used on input line 221.
 (pdftex.def)             Requested size: 226.79846pt x 355.76405pt.
 
-Underfull \hbox (badness 1902) in paragraph at lines 189--190
-\OT1/ptm/m/n/10 founder em-bed-dings $\OT1/cmr/bx/n/10 d[]$ \OT1/ptm/m/n/10 (Fig-ure [][]5[][]) re-veals three dis-
+Underfull \hbox (badness 1902) in paragraph at lines 227--228
+\OT1/ptm/m/n/10 founder em-bed-dings $\OT1/cmr/bx/n/10 d[]$ \OT1/ptm/m/n/10 (Fig-ure [][]6[][]) re-veals three dis-
  []
 
-<../data/figures/fig4_confounder_umap.png, id=162, 590.4459pt x 517.4532pt>
+<../data/figures/fig4_confounder_umap.png, id=176, 590.4459pt x 517.4532pt>
 File: ../data/figures/fig4_confounder_umap.png Graphic file (type png)
 <use ../data/figures/fig4_confounder_umap.png>
-Package pdftex.def Info: ../data/figures/fig4_confounder_umap.png  used on input line 193.
+Package pdftex.def Info: ../data/figures/fig4_confounder_umap.png  used on input line 231.
 (pdftex.def)             Requested size: 226.79846pt x 198.7582pt.
-[3 <../data/figures/fig1_direct_effect_map.png> <../data/figures/fig2_spillover_bars.png> <../data/figures/fig3_spillover_network.png>]
-<../data/figures/fig5_spillover_heatmap.png, id=175, 651.3936pt x 570.6921pt>
+<../data/figures/fig5_spillover_heatmap.png, id=178, 651.3936pt x 570.6921pt>
 File: ../data/figures/fig5_spillover_heatmap.png Graphic file (type png)
 <use ../data/figures/fig5_spillover_heatmap.png>
-Package pdftex.def Info: ../data/figures/fig5_spillover_heatmap.png  used on input line 203.
+Package pdftex.def Info: ../data/figures/fig5_spillover_heatmap.png  used on input line 241.
 (pdftex.def)             Requested size: 226.79846pt x 198.70026pt.
 
-Underfull \hbox (badness 1515) in paragraph at lines 214--215
-[]\OT1/ptm/m/n/10 Implementing a reweighted, spatially-aware IRA al-
+Underfull \hbox (badness 1968) in paragraph at lines 249--251
+[]\OT1/ptm/m/n/10 Current IRA dis-tri-bu-tion method-olo-gies ig-nore spa-tial
  []
 
-[4 <../data/figures/fig4_confounder_umap.png> <../data/figures/fig5_spillover_heatmap.png>]
+[3 <../data/figures/traversal_METRO_MANILA.png>] [4 <../data/figures/fig1_direct_effect_map.png> <../data/figures/fig2_spillover_bars.png> <../data/figures/fig3_spillover_network.png> <../data/figures/fig4_confounder_umap.png>]
+Underfull \hbox (badness 6927) in paragraph at lines 270--271
+[]\OT1/ptm/m/n/10 Apply for-mal causal iden-ti-fi-ca-tion meth-ods (e.g.,
+ []
+
 
 ** Conference Paper **
 Before submitting the final camera ready copy, remember to:
@@ -516,29 +528,27 @@ Before submitting the final camera ready copy, remember to:
  uses only Type 1 fonts and that every step in the generation
  process uses the appropriate paper size.
 
-[5
-
-] (./project_IRA_neighbor.aux)
+[5 <../data/figures/fig5_spillover_heatmap.png>] (./project_IRA_neighbor.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
  ***********
 Package rerunfilecheck Info: File `project_IRA_neighbor.out' has not changed.
-(rerunfilecheck)             Checksum: 5AFDB199159100CC4C9CC11D9DB1F312;4030.
+(rerunfilecheck)             Checksum: 213DA9F1EFEAD9D4833150B94A735AE0;4411.
  ) 
 Here is how much of TeX's memory you used:
- 12891 strings out of 474222
- 206253 string characters out of 5748733
+ 12933 strings out of 474222
+ 207188 string characters out of 5748733
  1949975 words of memory out of 5000000
- 34924 multiletter control sequences out of 15000+600000
- 601598 words of font info for 121 fonts, out of 8000000 for 9000
+ 34953 multiletter control sequences out of 15000+600000
+ 603450 words of font info for 128 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,18n,79p,1395b,577s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,18n,79p,1756b,530s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmib10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on project_IRA_neighbor.pdf (5 pages, 1584991 bytes).
+Output written on project_IRA_neighbor.pdf (5 pages, 1868332 bytes).
 PDF statistics:
- 293 PDF objects out of 1000 (max. 8388607)
- 231 compressed objects within 3 object streams
- 51 named destinations out of 1000 (max. 500000)
- 234 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 318 PDF objects out of 1000 (max. 8388607)
+ 254 compressed objects within 3 object streams
+ 59 named destinations out of 1000 (max. 500000)
+ 255 words of extra memory for PDF output out of 10000 (max. 10000000)
 

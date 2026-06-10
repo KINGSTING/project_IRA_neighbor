@@ -1,0 +1,6 @@
+Model,Validation MSE
+Panel FE,558628776.9897279
+MLP (no spatial),6588478976.0
+Plain GCN,6589885440.0
+Spatial Lag (SAR),
+Our Graph VAE (full),

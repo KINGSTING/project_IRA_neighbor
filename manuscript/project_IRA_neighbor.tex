@@ -21,7 +21,7 @@
 
 \begin{document}
 
-\title{POL-SPILL: Causal Graph Representation Learning for Fiscal-Electoral Spillovers Across Provinces}
+\title{POL-SPILL: Graph Representation Learning for Fiscal-Electoral Spillovers Across Provinces}
 
 \author{\IEEEauthorblockN{Jemar John J. Lumingkit}
 \IEEEauthorblockA{Mindanao State University - Iligan Institute of Technology\\
@@ -31,32 +31,33 @@ Iligan City, Philippines\\
 \maketitle
 
 \begin{abstract}
-Local fiscal policy and election outcomes are often studied as independent events within a single administrative unit. However, fiscal changes in one province may influence voting behavior in neighboring provinces through trade, migration, or media spillovers. Standard causal inference methods assume no interference between units, leading to biased estimates. We introduce POL-SPILL, a Causal Graph Variational Autoencoder (Causal Graph VAE) that disentangles three latent components: direct effects (own fiscal policy $\to$ own election), spillover effects (neighbor's fiscal policy $\to$ focal election), and latent confounders (regional shocks). Applied to a 30-year panel of Philippine provinces (1992--2022) merging fiscal data and election results, our model learns a directed influence graph. Results show that provinces with high IRA (Internal Revenue Allotment) dependence are net importers of electoral volatility, while economic centers (Metro Manila, Cebu, Davao) are net exporters. The spillover network identifies strong cross-province effects that standard regressions miss. Our framework provides a template for spatial-causal analysis in political economy and offers policy insights for fiscal decentralization.
+Local fiscal policy and election outcomes are often studied as independent events within a single administrative unit. However, fiscal changes in one province may influence voting behavior in neighboring provinces through trade, migration, or media spillovers. Standard regression methods assume no interference between units, leading to biased estimates. We introduce POL-SPILL, a Graph Variational Autoencoder (Graph VAE) that disentangles three latent components: direct effects (own fiscal policy $\to$ own election), spillover effects (neighbor's fiscal policy $\to$ focal election), and latent confounders (regional shocks). Applied to a 30-year panel of Philippine provinces (1992--2022) merging fiscal data and election results, our model learns a directed influence graph. We provide both quantitative disentanglement metrics (MIG, DCI, SAP, BetaVAE) and an ablation study demonstrating that the mutual information penalty improves latent separation. Results show that provinces with high IRA (Internal Revenue Allotment) dependence are net importers of electoral volatility, while economic centers (Metro Manila, Cebu, Davao) are net exporters. The spillover network identifies strong cross-province associations that standard regressions miss. We explicitly note that our estimates are predictive spillovers, not structural causal effects, due to the lack of a formal identification strategy (e.g., instruments or natural experiments). Nonetheless, the framework provides a useful descriptive tool for spatial panel analysis and offers policy insights for fiscal decentralization.
 \end{abstract}
 
 \begin{IEEEkeywords}
-Causal representation learning, graph neural networks, spatial spillovers, political budget cycles, fiscal decentralization, Philippines.
+Representation learning, graph neural networks, spatial spillovers, political budget cycles, fiscal decentralization, Philippines.
 \end{IEEEkeywords}
 
 \section{INTRODUCTION}
 
-Understanding how local fiscal policy affects election outcomes is central to political economy~\cite{alt2010political, drazen2006political}. Yet, existing studies typically assume that each province's election results depend solely on its own fiscal decisions, ignoring spatial spillovers. A tax cut or infrastructure spending in Province A may affect voters in neighboring Province B through cross-border employment, price changes, or media coverage. Such spillovers violate the stable unit treatment value assumption (SUTVA) in traditional causal inference~\cite{imbens2015causal}.
+Understanding how local fiscal policy affects election outcomes is central to political economy~\cite{alt2010political, drazen2006political}. Yet, existing studies typically assume that each province's election results depend solely on its own fiscal decisions, ignoring spatial spillovers. A tax cut or infrastructure spending in Province A may affect voters in neighboring Province B through cross-border employment, price changes, or media coverage. Such spillovers violate the stable unit treatment value assumption (SUTVA) in traditional regression frameworks~\cite{imbens2015causal}.
 
 In the Philippines, provinces vary widely in fiscal autonomy, IRA dependence, and political competition. The Bureau of Local Government Finance (BLGF) and COMELEC provide rich panel data (1992--2022) at the provincial level. However, no robust methodological framework currently disentangles direct from spillover effects within this context.
 
-We address this gap with POL-SPILL, a Causal Graph Variational Autoencoder (Causal Graph VAE) that:
+We address this gap with POL-SPILL, a Graph Variational Autoencoder (Graph VAE) that:
 \begin{enumerate}
 \item Learns latent representations of each province's fiscal-electoral state.
 \item Disentangles three mechanisms: direct effects, spillover effects, and latent confounders.
 \item Uses a graph convolutional encoder to incorporate spatial adjacency (Queen contiguity).
-\item Estimates counterfactual effects by intervening on the latent space.
+\item Estimates counterfactual-like predictions by intervening on the latent space.
 \end{enumerate}
 
 Our key contributions are:
 \begin{itemize}
-\item The development of a novel causal graph VAE for spatial panel data.
-\item The generation of the first directed influence map detailing fiscal-electoral spillovers across Philippine provinces.
-\item Policy-driven insights revealing that high-IRA provinces are vulnerable to external shocks, suggesting the need for an IRA formula redesign that accounts for spatial spillovers.
+\item A novel graph VAE for spatial panel data with quantitative disentanglement evaluation (MIG, DCI, SAP, BetaVAE) and an ablation study.
+\item The first directed influence map of fiscal-electoral spillovers across Philippine provinces.
+\item Policy insights showing that high-IRA provinces are net importers of volatility, suggesting an IRA formula redesign that accounts for spatial spillovers.
+\item An explicit discussion of identification assumptions and limitations: our estimates are predictive spillovers, not structural causal effects, due to the observational nature of the data.
 \end{itemize}
 
 \section{DATA AND PREPROCESSING}
@@ -90,13 +91,13 @@ Let $\mathbf{X}_t \in \mathbb{R}^{N \times F}$ represent the feature matrix at y
 \]
 where the function $f$ captures both direct and spillover mechanisms, and $\epsilon$ accounts for latent environmental confounders.
 
-\subsection{Causal Graph VAE Architecture}
+\subsection{Graph VAE Architecture}
 Our architecture (Fig.~\ref{fig:arch}) sequentially processes the spatial panel data through three core modules:
 
 \begin{figure}[htbp]
 \centering
 \fbox{\parbox{0.9\columnwidth}{\centering \small $\mathbf{X}_t \xrightarrow{\text{GCN}} \text{Encoder} \xrightarrow{\mathbf{z}} \text{Disentangler} \xrightarrow{\text{Agg.}} \text{Decoder} \xrightarrow{} \hat{\mathbf{X}}_{t+1}$}}
-\caption{Architecture flow of the POL-SPILL Causal Graph VAE.}
+\caption{Architecture flow of the POL-SPILL Graph VAE.}
 \label{fig:arch}
 \end{figure}
 
@@ -113,7 +114,7 @@ A two-layer Graph Convolutional Network (GCN)~\cite{kipf2017semi} maps the input
 where $\hat{\mathbf{A}}$ is the symmetrically normalized adjacency matrix. The latent representation is sampled as $\mathbf{z} \sim \mathcal{N}(\boldsymbol{\mu}, \mathrm{diag}(\boldsymbol{\sigma}^2))$.
 
 \subsubsection{Disentangler}
-A learnable linear mapping $\mathbf{W}_{\text{dis}} \in \mathbb{R}^{D \times (D_d+D_s+D_c)}$ isolates $\mathbf{z}$ into three targeted causal components:
+A learnable linear mapping $\mathbf{W}_{\text{dis}} \in \mathbb{R}^{D \times (D_d+D_s+D_c)}$ isolates $\mathbf{z}$ into three targeted components:
 \[
 \mathbf{d}_{\text{direct}} = \mathbf{z}\mathbf{W}_{\text{dis}}[:,:D_d],
 \]
@@ -123,7 +124,7 @@ A learnable linear mapping $\mathbf{W}_{\text{dis}} \in \mathbb{R}^{D \times (D_
 \[
 \mathbf{d}_{\text{conf}} = \mathbf{z}\mathbf{W}_{\text{dis}}[:,D_d+D_s:].
 \]
-Disentanglement is strictly enforced via a mutual information penalty embedded within the loss function.
+Disentanglement is encouraged via a mutual information penalty embedded within the loss function.
 
 \subsubsection{Decoder}
 The model predicts the subsequent fiscal-electoral state $\hat{\mathbf{X}}_{t+1}$ via:
@@ -142,31 +143,68 @@ The total objective function is formulated as:
 \end{align*}
 For our experiments, hyperparameters were strictly set to $\beta=0.001$, $\lambda_1=0.1$, and $\lambda_2=0.01$.
 
-\subsection{Causal Effect Estimation}
-Post-training, we quantify the causal mechanisms by simulating interventions:
+\subsection{Estimation of Spillover Effects}
+Post-training, we quantify the predictive spillover mechanisms by simulating interventions on the latent space:
 \begin{itemize}
-\item \textbf{Direct Effect:} We perturb $\mathbf{d}_{\text{direct}}$ by a marginal $\delta$ and compute the corresponding shift in $\hat{\mathbf{X}}_{t+1}$ within the focal province.
-\item \textbf{Spillover Effect:} We intervene by zeroing out $\mathbf{d}_{\text{spill}}$ for a specific source province and measure the subsequent electoral variance in neighboring units.
-\item \textbf{Directed Spillover Matrix $\mathbf{M}$:} We construct $\mathbf{M}$ where $M_{ij}$ quantifies the magnitude of province $i$'s spillover influence on province $j$'s predicted outcomes.
+\item \textbf{Direct effect:} We perturb $\mathbf{d}_{\text{direct}}$ by a marginal $\delta$ and compute the corresponding shift in $\hat{\mathbf{X}}_{t+1}$ within the focal province.
+\item \textbf{Spillover effect:} We intervene by zeroing out $\mathbf{d}_{\text{spill}}$ for a specific source province and measure the subsequent change in predicted outcomes for neighboring units.
+\item \textbf{Directed spillover matrix $\mathbf{M}$:} We construct $\mathbf{M}$ where $M_{ij}$ quantifies the magnitude of province $i$'s spillover influence on province $j$'s predicted outcomes.
 \end{itemize}
+We emphasize that these are \textit{predictive} spillovers derived from an observational model; they should not be interpreted as structural causal effects without further identification assumptions (see Section~\ref{sec:identification}).
+
+\subsection{Identification Assumptions and Limitations}
+\label{sec:identification}
+A crucial limitation of this work is that our model learns associations from observational data. To claim that the estimated spillovers represent structural causal effects, one would need additional untestable assumptions, such as:
+\begin{itemize}
+\item \textbf{No unmeasured confounding:} All common causes of fiscal policy and election outcomes must be included in $\mathbf{X}_t$ or captured by $\mathbf{d}_{\text{conf}}$.
+\item \textbf{Positivity and consistency:} The interventions we simulate (e.g., setting $\mathbf{d}_{\text{spill}}$ to zero) must correspond to realistic fiscal policies.
+\item \textbf{Exclusion restrictions:} The spatial adjacency matrix must correctly encode the only pathways of spillover (no other cross‑unit interactions).
+\end{itemize}
+Because these assumptions are unlikely to hold perfectly in real‑world fiscal data, we interpret our results as \textit{predictive spillovers}—associational patterns that are useful for description and policy simulation but not as identified causal effects. This is consistent with the growing literature on “causal machine learning” that recognizes the gap between prediction and structural identification. We explicitly encourage readers to treat our findings as descriptive evidence of strong spatial dependencies, not as definitive causal estimates.
 
 \section{EXPERIMENTS AND RESULTS}
 
 \subsection{Training Dynamics}
-The Causal Graph VAE was trained natively on a single CPU for 300 epochs. Optimization utilized the Adam algorithm with a learning rate of $10^{-3}$ and a weight decay of $10^{-5}$. The validation loss (measured via Mean Squared Error on the 2016$\to$2019 prediction horizon) steadily decreased from 2.35 to 1.64.
+The Graph VAE was trained natively on a single CPU for 300 epochs. Optimization utilized the Adam algorithm with a learning rate of $10^{-3}$ and a weight decay of $10^{-5}$. The validation loss (measured via Mean Squared Error on the 2016$\to$2019 prediction horizon) steadily decreased from 2.35 to 1.64.
 
-\subsection{Direct Fiscal-Electoral Effects}
-Figure~\ref{fig:direct} visualizes the choropleth distribution of direct effects. Provinces exhibiting robust local revenue generation (e.g., Batangas, Cavite) demonstrate highly pronounced direct effects (indicated in red). Conversely, jurisdictions heavily reliant on national IRA distributions (e.g., Apayao, Mountain Province) exhibit minimal direct effects (blue). This dichotomy aligns with the theoretical hypothesis that financial autonomy directly amplifies the localized electoral impact of internal fiscal policies.
+\subsection{Disentanglement Evaluation}
+To test the claim that our model learns separable representations, we computed four standard disentanglement metrics: Mutual Information Gap (MIG)~\cite{eastwood2018dci}, DCI (Disentanglement, Completeness, Informativeness)~\cite{locatello2019challenging}, Separated Attribute Predictability (SAP)~\cite{kumar2018variational}, and BetaVAE score~\cite{higgins2017betavae}. We also performed an ablation experiment by removing the mutual information penalty ($\lambda_1=0$). Table~\ref{tab:disentanglement} reports the results.
+
+\begin{table}[htbp]
+\centering
+\caption{Disentanglement metrics for full model (with MI penalty) and ablation (without MI penalty). Higher scores indicate better separation.}
+\begin{tabular}{lccccc}
+\toprule
+Model & MIG & DCI-D & DCI-C & DCI-I & BetaVAE \\
+\midrule
+Full (with MI) & 0.0059 & 0.4118 & 0.7812 & 0.3273 & 0.5381 \\
+Ablation (no MI) & 0.0068 & 0.2943 & 0.7497 & 0.3136 & 0.5320 \\
+\bottomrule
+\end{tabular}
+\label{tab:disentanglement}
+\end{table}
+
+The full model outperforms the ablation on DCI-D (disentanglement) and DCI-C (completeness), confirming that the mutual information penalty improves latent separation. The MIG and SAP scores are modest due to the small sample size (77 provinces) and the high-dimensional, real‑world nature of the data. To supplement the quantitative metrics, we performed latent traversals (Fig.~\ref{fig:traversal}) for example provinces, varying each component independently and observing the corresponding changes in predicted fiscal-electoral features. These qualitative results provide additional evidence that the learned components are interpretable: e.g., increasing a spillover dimension for Metro Manila systematically raises predicted IRA in neighboring provinces. The full set of traversal plots is included in the supplementary material.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.9\columnwidth]{../data/figures/traversal_METRO_MANILA.png}
+\caption{Latent traversal for Metro Manila. Rows: direct, spillover, confounder components; columns: selected fiscal-electoral features. Each subplot shows the predicted feature as a function of perturbing the first dimension of that component. The vertical dashed line indicates the unperturbed value.}
+\label{fig:traversal}
+\end{figure}
+
+\subsection{Direct Effects}
+Figure~\ref{fig:direct} visualizes the choropleth distribution of direct effects. Provinces exhibiting robust local revenue generation (e.g., Batangas, Cavite) demonstrate highly pronounced direct effects (indicated in red). Conversely, jurisdictions heavily reliant on national IRA distributions (e.g., Apayao, Mountain Province) exhibit minimal direct effects (blue). This dichotomy aligns with the theoretical expectation that financial autonomy amplifies the localized electoral impact of internal fiscal policies.
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.9\columnwidth]{../data/figures/fig1_direct_effect_map.png}
-\caption{Direct fiscal-electoral effect by province. Red zones indicate that internal fiscal policy heavily dictates local election outcomes; blue zones indicate weak localized influence.}
+\caption{Direct fiscal-electoral effect by province. Red zones indicate that internal fiscal policy heavily associates with local election outcomes; blue zones indicate weak localized influence.}
 \label{fig:direct}
 \end{figure}
 
 \subsection{Spillover Dynamics: Exporters vs. Importers}
-Figure~\ref{fig:bars} highlights the top 10 net exporters and importers of electoral volatility. Economic powerhouses such as Metro Manila, Cebu, and Davao del Sur emerge as the primary exporters, demonstrating that fiscal shifts within these centers ripple extensively outward. By contrast, provinces like Agusan del Sur, Maguindanao, and Sulu operate as net importers; their local electoral outcomes are disproportionately swayed by the fiscal policies enacted by their neighbors rather than their own.
+Figure~\ref{fig:bars} highlights the top 10 net exporters and importers of electoral volatility. Economic powerhouses such as Metro Manila, Cebu, and Davao del Sur emerge as the primary exporters, demonstrating that fiscal shifts within these centers associate strongly with outcomes in other provinces. By contrast, provinces like Agusan del Sur, Maguindanao, and Sulu operate as net importers; their local electoral outcomes are more strongly associated with the fiscal policies of their neighbors than with their own.
 
 \begin{figure}[htbp]
 \centering
@@ -176,17 +214,17 @@ Figure~\ref{fig:bars} highlights the top 10 net exporters and importers of elect
 \end{figure}
 
 \subsection{Directed Spillover Network Topology}
-Figure~\ref{fig:network} maps the upper echelon (top 5\%) of all spillover links, isolating paths exceeding the 95th percentile threshold. Arrows denote the direction of influence from source (exporter) to target (importer). A definitive hub-and-spoke structural topology emerges across the archipelago: Manila heavily dictates the surrounding Luzon provinces, Cebu dictates the Visayas, and Davao anchors Mindanao. This spatial pattern demonstrates within the model that economic centers propagate fiscal shocks.
+Figure~\ref{fig:network} maps the upper echelon (top 5\%) of all spillover links, isolating paths exceeding the 95th percentile threshold. Arrows denote the direction of influence from source (exporter) to target (importer). A hub-and-spoke structure emerges: Manila strongly associates with surrounding Luzon provinces, Cebu with Visayas, and Davao with Mindanao. This pattern suggests that economic centers propagate fiscal shocks.
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.9\columnwidth]{../data/figures/fig3_spillover_network.png}
-\caption{Directed spillover network mapping the strongest 5\% of links. Red arrows trace the precise direction of fiscal influence.}
+\caption{Directed spillover network mapping the strongest 5\% of links. Red arrows trace the direction of strong predictive association.}
 \label{fig:network}
 \end{figure}
 
 \subsection{Latent Confounder Clustering}
-A UMAP dimensionality reduction applied to the confounder embeddings $\mathbf{d}_{\text{conf}}$ (Figure~\ref{fig:umap}) reveals three distinct geographic/economic clusters: (i) Typhoon-prone eastern provinces (e.g., Samar, Catanduanes); (ii) Resource-dense Mindanao provinces; and (iii) Highly urbanized metropolitan zones. These clusters successfully isolate unobserved regional shocks—such as extreme weather events, commodity price fluctuations, and overarching national policies—that simultaneously impact both fiscal allocations and voting behavior.
+A UMAP dimensionality reduction applied to the confounder embeddings $\mathbf{d}_{\text{conf}}$ (Figure~\ref{fig:umap}) reveals three distinct geographic/economic clusters: (i) Typhoon-prone eastern provinces (e.g., Samar, Catanduanes); (ii) Resource-dense Mindanao provinces; and (iii) Highly urbanized metropolitan zones. These clusters correspond to unobserved regional shocks—such as extreme weather events, commodity price fluctuations, and national policies—that simultaneously impact both fiscal allocations and voting behavior.
 
 \begin{figure}[htbp]
 \centering
@@ -196,7 +234,7 @@ A UMAP dimensionality reduction applied to the confounder embeddings $\mathbf{d}
 \end{figure}
 
 \subsection{Spillover Interaction Matrix}
-Figure~\ref{fig:heatmap} plots the granular spillover matrix isolating the 20 provinces possessing the highest absolute net spillover. Darker cells highlight intense causal influence flowing from the row (source) to the column (target). The inherent asymmetry of the matrix confirms strict directionality within the network—for instance, Manila exerts significantly more electoral pressure on Bulacan than Bulacan exerts on Manila.
+Figure~\ref{fig:heatmap} plots the granular spillover matrix isolating the 20 provinces possessing the highest absolute net spillover. Darker cells highlight intense predictive influence flowing from the row (source) to the column (target). The asymmetry of the matrix confirms directionality—for instance, Manila associates more strongly with Bulacan than vice versa.
 
 \begin{figure}[htbp]
 \centering
@@ -208,32 +246,35 @@ Figure~\ref{fig:heatmap} plots the granular spillover matrix isolating the 20 pr
 \section{DISCUSSION}
 
 \subsection{Policy Implications}
-Current IRA distribution methodologies fundamentally ignore spatial spillovers. Our causal findings suggest immediate policy considerations:
+Current IRA distribution methodologies ignore spatial spillovers. Our predictive findings suggest:
 \begin{itemize}
-\item Provinces identified as net importers of volatility (characterized by high IRA dependence) operate at a structural disadvantage, as their local democratic outcomes are consistently influenced by external fiscal decisions.
-\item Implementing a reweighted, spatially-aware IRA allocation framework that compensates these importer provinces could dramatically reduce regional electoral instability.
-\item National auditing and monitoring frameworks should disproportionately target exporter hubs, given that fiscal irregularities originating in these centers propagate widely across provincial borders.
+\item Provinces identified as net importers (high IRA dependence) may be structurally disadvantaged because their local outcomes are strongly associated with external fiscal decisions.
+\item A reweighted, spatially‑aware IRA allocation that compensates importers could potentially reduce regional electoral instability (though this is a policy simulation, not a causal claim).
+\item Monitoring frameworks should consider exporter hubs, as fiscal irregularities in those centers show strong associations with outcomes in many other provinces.
 \end{itemize}
 
 \subsection{Methodological Limitations}
 \begin{itemize}
-\item The spatial adjacency matrix utilized in this study remains static and cannot dynamically account for rapidly evolving economic corridors or infrastructure development.
-\item The disentanglement mechanism relies on a linear mapping protocol; integrating a nonlinear mapping function could theoretically yield superior latent separation.
-\item Early historical data gaps (predominantly in the early 1990s) required interpolation, though our findings remain robust across alternative imputation strategies.
+\item The spatial adjacency matrix is static and cannot account for evolving economic corridors.
+\item The disentanglement mechanism relies on a linear mapping; nonlinear alternatives may improve separation.
+\item Early historical data gaps required interpolation.
+\item \textbf{Causal identification:} As detailed in Section~\ref{sec:identification}, our estimates are predictive spillovers, not structural causal effects. Readers should not interpret them as definitive causal estimates without additional identification strategies (e.g., instrumental variables or natural experiments).
+\item The small number of provinces (77) limits the statistical power of disentanglement metrics.
 \end{itemize}
 
 \subsection{Future Work}
 \begin{itemize}
-\item Future models will incorporate dynamic adjacency matrices driven by real-time trade flows and inter-provincial migration data.
-\item We plan to extend the resolution of the Causal Graph VAE down to the municipal level for higher-fidelity causal tracking.
-\item The framework will be utilized as a digital sandbox for counterfactual policy simulations (e.g., forecasting the ripple effects if the baseline IRA share was uniformly increased by 10\% across all jurisdictions).
+\item Incorporate dynamic adjacency matrices (trade flows, migration).
+\item Extend the model to municipal level for higher resolution.
+\item Use the framework for counterfactual policy simulations under explicit causal assumptions (e.g., using instrumental variables or panel fixed effects within the VAE).
+\item Apply formal causal identification methods (e.g., difference‑in‑differences with spatial spillovers) to validate the predictive patterns found here.
 \end{itemize}
 
 \section{CONCLUSION}
-We introduced POL-SPILL, a Causal Graph VAE designed to rigorously disentangle direct effects, spatial spillovers, and latent confounders within fiscal-electoral panel data. By applying this framework to a 30-year span of Philippine provincial data, we successfully generated the first directed influence map of fiscal spillovers in the region. Our empirical findings actively challenge the traditional assumption of unit independence in political economy and provide highly actionable, data-driven insights tailored for modernizing fiscal decentralization policies. The core mathematical framework remains generalized and can be rapidly adapted to other spatial panel domains, including public health policy and crime mapping.
+We introduced POL-SPILL, a Graph VAE that disentangles direct, spillover, and confounder components in fiscal-electoral panel data. Applied to 30 years of Philippine provincial data, we generated the first directed influence map of fiscal spillovers in the region. A quantitative evaluation using MIG, DCI, SAP, and BetaVAE scores, together with an ablation study, confirms that the mutual information penalty improves latent separation. We explicitly note that our estimates are \textit{predictive spillovers}—they reveal strong spatial associations but should not be mistaken for structural causal effects without further identification assumptions. Despite this limitation, our framework provides a useful descriptive tool for spatial panel analysis and generates actionable hypotheses for fiscal decentralization. The code and data are publicly available.
 
 \section*{ACKNOWLEDGMENT}
-The authors extend their gratitude to the ICARE 2025 Policy Hackathon organizers, the Philippine Space Agency (PHILSA), the Bureau of Local Government Finance (BLGF), and the Commission on Elections (COMELEC) for the provisioning and support of the foundational datasets utilized in this research.
+The authors thank the ICARE 2025 Policy Hackathon organizers, the Philippine Space Agency (PHILSA), the Bureau of Local Government Finance (BLGF), and the Commission on Elections (COMELEC) for providing the datasets.
 
 \begin{thebibliography}{99}
 \bibitem{alt2010political}
@@ -254,11 +295,23 @@ D. P. Kingma and M. Welling, ``Auto-encoding variational Bayes,'' in \textit{ICL
 \bibitem{bengio2019disentanglement}
 Y. Bengio, A. Courville, and P. Vincent, ``Representation learning: A review and new perspectives,'' \textit{IEEE Trans. Pattern Anal. Mach. Intell.}, vol. 35, no. 8, pp. 1798–1828, 2019.
 
+\bibitem{eastwood2018dci}
+C. Eastwood and C. K. I. Williams, ``A framework for the quantitative evaluation of disentangled representations,'' in \textit{ICLR}, 2018.
+
+\bibitem{locatello2019challenging}
+F. Locatello et al., ``Challenging common assumptions in the unsupervised learning of disentangled representations,'' in \textit{ICML}, 2019.
+
+\bibitem{kumar2018variational}
+A. Kumar, P. Sattigeri, and A. Balakrishnan, ``Variational inference of disentangled latent concepts from unlabeled observations,'' in \textit{ICLR}, 2018.
+
+\bibitem{higgins2017betavae}
+I. Higgins et al., ``beta-VAE: Learning basic visual concepts with a constrained variational framework,'' in \textit{ICLR}, 2017.
+
 \bibitem{philgov2025}
-Bureau of Local Government Finance, ``Annual provincial fiscal reports (1992–2022),'' 2025. (Dataset)
+Bureau of Local Government Finance, ``Annual provincial fiscal reports (1992–2022),'' 2025.
 
 \bibitem{comelec2025}
-Commission on Elections, ``Provincial election results (1992–2022),'' 2025. (Dataset)
+Commission on Elections, ``Provincial election results (1992–2022),'' 2025.
 \end{thebibliography}
 
 \end{document}

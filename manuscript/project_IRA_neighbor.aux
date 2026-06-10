@@ -8,48 +8,63 @@
 \@writefile{toc}{\contentsline {section}{\numberline {II}DATA AND PREPROCESSING}{1}{section.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-A}}Sources}{1}{subsection.2.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-B}}Preprocessing Protocols}{1}{subsection.2.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-C}}Spatial Adjacency Matrix}{1}{subsection.2.3}\protected@file@percent }
 \citation{kipf2017semi}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-C}}Spatial Adjacency Matrix}{2}{subsection.2.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {III}METHODOLOGY}{2}{section.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-A}}Problem Formulation}{2}{subsection.3.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-B}}Causal Graph VAE Architecture}{2}{subsection.3.2}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Architecture flow of the POL-SPILL Causal Graph VAE.}}{2}{figure.caption.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-B}}Graph VAE Architecture}{2}{subsection.3.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Architecture flow of the POL-SPILL Graph VAE.}}{2}{figure.caption.1}\protected@file@percent }
 \providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
-\newlabel{fig:arch}{{1}{2}{Architecture flow of the POL-SPILL Causal Graph VAE}{figure.caption.1}{}}
+\newlabel{fig:arch}{{1}{2}{Architecture flow of the POL-SPILL Graph VAE}{figure.caption.1}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {III-B}1}Encoder}{2}{subsubsection.3.2.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {III-B}2}Disentangler}{2}{subsubsection.3.2.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {III-B}3}Decoder}{2}{subsubsection.3.2.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-C}}Loss Function}{2}{subsection.3.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-D}}Causal Effect Estimation}{2}{subsection.3.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {IV}EXPERIMENTS AND RESULTS}{2}{section.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-A}}Training Dynamics}{2}{subsection.4.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-B}}Direct Fiscal-Electoral Effects}{2}{subsection.4.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-C}}Spillover Dynamics: Exporters vs. Importers}{2}{subsection.4.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Direct fiscal-electoral effect by province. Red zones indicate that internal fiscal policy heavily dictates local election outcomes; blue zones indicate weak localized influence.}}{3}{figure.caption.2}\protected@file@percent }
-\newlabel{fig:direct}{{2}{3}{Direct fiscal-electoral effect by province. Red zones indicate that internal fiscal policy heavily dictates local election outcomes; blue zones indicate weak localized influence}{figure.caption.2}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Top 10 spillover exporters (left) and importers (right) demonstrating the flow of fiscal-electoral influence.}}{3}{figure.caption.3}\protected@file@percent }
-\newlabel{fig:bars}{{3}{3}{Top 10 spillover exporters (left) and importers (right) demonstrating the flow of fiscal-electoral influence}{figure.caption.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-D}}Directed Spillover Network Topology}{3}{subsection.4.4}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Directed spillover network mapping the strongest 5\% of links. Red arrows trace the precise direction of fiscal influence.}}{3}{figure.caption.4}\protected@file@percent }
-\newlabel{fig:network}{{4}{3}{Directed spillover network mapping the strongest 5\% of links. Red arrows trace the precise direction of fiscal influence}{figure.caption.4}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-E}}Latent Confounder Clustering}{3}{subsection.4.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-F}}Spillover Interaction Matrix}{3}{subsection.4.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-D}}Estimation of Spillover Effects}{2}{subsection.3.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-E}}Identification Assumptions and Limitations}{2}{subsection.3.5}\protected@file@percent }
+\newlabel{sec:identification}{{\mbox  {III-E}}{2}{Identification Assumptions and Limitations}{subsection.3.5}{}}
+\citation{eastwood2018dci}
+\citation{locatello2019challenging}
+\citation{kumar2018variational}
+\citation{higgins2017betavae}
+\@writefile{toc}{\contentsline {section}{\numberline {IV}EXPERIMENTS AND RESULTS}{3}{section.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-A}}Training Dynamics}{3}{subsection.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-B}}Disentanglement Evaluation}{3}{subsection.4.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {I}{\ignorespaces Disentanglement metrics for full model (with MI penalty) and ablation (without MI penalty). Higher scores indicate better separation.}}{3}{table.caption.2}\protected@file@percent }
+\newlabel{tab:disentanglement}{{I}{3}{Disentanglement metrics for full model (with MI penalty) and ablation (without MI penalty). Higher scores indicate better separation}{table.caption.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-C}}Direct Effects}{3}{subsection.4.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-D}}Spillover Dynamics: Exporters vs. Importers}{3}{subsection.4.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Latent traversal for Metro Manila. Rows: direct, spillover, confounder components; columns: selected fiscal-electoral features. Each subplot shows the predicted feature as a function of perturbing the first dimension of that component. The vertical dashed line indicates the unperturbed value.}}{3}{figure.caption.3}\protected@file@percent }
+\newlabel{fig:traversal}{{2}{3}{Latent traversal for Metro Manila. Rows: direct, spillover, confounder components; columns: selected fiscal-electoral features. Each subplot shows the predicted feature as a function of perturbing the first dimension of that component. The vertical dashed line indicates the unperturbed value}{figure.caption.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-E}}Directed Spillover Network Topology}{3}{subsection.4.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-F}}Latent Confounder Clustering}{3}{subsection.4.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-G}}Spillover Interaction Matrix}{3}{subsection.4.7}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Direct fiscal-electoral effect by province. Red zones indicate that internal fiscal policy heavily associates with local election outcomes; blue zones indicate weak localized influence.}}{4}{figure.caption.4}\protected@file@percent }
+\newlabel{fig:direct}{{3}{4}{Direct fiscal-electoral effect by province. Red zones indicate that internal fiscal policy heavily associates with local election outcomes; blue zones indicate weak localized influence}{figure.caption.4}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Top 10 spillover exporters (left) and importers (right) demonstrating the flow of fiscal-electoral influence.}}{4}{figure.caption.5}\protected@file@percent }
+\newlabel{fig:bars}{{4}{4}{Top 10 spillover exporters (left) and importers (right) demonstrating the flow of fiscal-electoral influence}{figure.caption.5}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Directed spillover network mapping the strongest 5\% of links. Red arrows trace the direction of strong predictive association.}}{4}{figure.caption.6}\protected@file@percent }
+\newlabel{fig:network}{{5}{4}{Directed spillover network mapping the strongest 5\% of links. Red arrows trace the direction of strong predictive association}{figure.caption.6}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces UMAP projection of latent confounder embeddings, colored by the magnitude of their direct effect. Individual points represent distinct provinces.}}{4}{figure.caption.7}\protected@file@percent }
+\newlabel{fig:umap}{{6}{4}{UMAP projection of latent confounder embeddings, colored by the magnitude of their direct effect. Individual points represent distinct provinces}{figure.caption.7}{}}
 \bibcite{alt2010political}{1}
-\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces UMAP projection of latent confounder embeddings, colored by the magnitude of their direct effect. Individual points represent distinct provinces.}}{4}{figure.caption.5}\protected@file@percent }
-\newlabel{fig:umap}{{5}{4}{UMAP projection of latent confounder embeddings, colored by the magnitude of their direct effect. Individual points represent distinct provinces}{figure.caption.5}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Directional spillover matrix isolating the top 20 net spillover provinces (Rows = Source, Columns = Target).}}{4}{figure.caption.6}\protected@file@percent }
-\newlabel{fig:heatmap}{{6}{4}{Directional spillover matrix isolating the top 20 net spillover provinces (Rows = Source, Columns = Target)}{figure.caption.6}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {V}DISCUSSION}{4}{section.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-A}}Policy Implications}{4}{subsection.5.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-B}}Methodological Limitations}{4}{subsection.5.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-C}}Future Work}{4}{subsection.5.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {VI}CONCLUSION}{4}{section.6}\protected@file@percent }
 \bibcite{drazen2006political}{2}
 \bibcite{imbens2015causal}{3}
 \bibcite{kipf2017semi}{4}
 \bibcite{kingma2013auto}{5}
 \bibcite{bengio2019disentanglement}{6}
-\bibcite{philgov2025}{7}
-\bibcite{comelec2025}{8}
-\@writefile{toc}{\contentsline {section}{References}{5}{section*.8}\protected@file@percent }
+\bibcite{eastwood2018dci}{7}
+\bibcite{locatello2019challenging}{8}
+\bibcite{kumar2018variational}{9}
+\bibcite{higgins2017betavae}{10}
+\bibcite{philgov2025}{11}
+\bibcite{comelec2025}{12}
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Directional spillover matrix isolating the top 20 net spillover provinces (Rows = Source, Columns = Target).}}{5}{figure.caption.8}\protected@file@percent }
+\newlabel{fig:heatmap}{{7}{5}{Directional spillover matrix isolating the top 20 net spillover provinces (Rows = Source, Columns = Target)}{figure.caption.8}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {V}DISCUSSION}{5}{section.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-A}}Policy Implications}{5}{subsection.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-B}}Methodological Limitations}{5}{subsection.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-C}}Future Work}{5}{subsection.5.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {VI}CONCLUSION}{5}{section.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{References}{5}{section*.10}\protected@file@percent }
 \gdef \@abspage@last{5}
