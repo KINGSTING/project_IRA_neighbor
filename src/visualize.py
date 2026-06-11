@@ -2,6 +2,7 @@
 """
 Visualization for POL-SPILL: Causal Graph VAE Results
 Generates publication-ready maps, network graphs, and cluster plots.
+Figure 1 implements a premium geographical choropleth matching the style of Project Bahura.
 """
 
 import os
@@ -11,7 +12,6 @@ import geopandas as gpd
 import matplotlib.pyplot as plt
 import networkx as nx
 import seaborn as sns
-from sklearn.preprocessing import StandardScaler
 import umap
 from adjustText import adjust_text
 
@@ -29,16 +29,16 @@ plt.rcParams['savefig.bbox'] = 'tight'
 
 # Load data
 effects = np.load(os.path.join(DATA_DIR, "causal_effects.npz"), allow_pickle=True)
-direct_effect = effects['direct_effect']                 
-spill_export = effects['spillover_exported']             
-spill_receive = effects['spillover_received']            
-spill_matrix = effects['spillover_matrix']               
-d_confounder = effects['d_confounder']                   
-provinces = effects['provinces']                         
+direct_effect = effects['direct_effect']
+spill_export = effects['spillover_exported']
+spill_receive = effects['spillover_received']
+spill_matrix = effects['spillover_matrix']
+d_confounder = effects['d_confounder']
+provinces = effects['provinces']
 
 # Load and align geometry
 gdf = gpd.read_file(os.path.join(DATA_DIR, "provinces_with_nodeid.geojson"))
-gdf = gdf.sort_values('node_id')  
+gdf = gdf.sort_values('node_id')
 assert len(gdf) == len(provinces), "Mismatch between geometry and effects"
 
 gdf['province'] = provinces
@@ -47,19 +47,62 @@ gdf['spillover_export'] = spill_export
 gdf['spillover_receive'] = spill_receive
 gdf['net_spillover'] = spill_export - spill_receive
 
-# ============================================================
-# 1. Choropleth Map: Direct Effect
-# ============================================================
-print("Generating Figure 1: Direct Effect Map...")
-fig, ax = plt.subplots(1, 1, figsize=(10, 10))
-gdf.plot(column='direct_effect', cmap='coolwarm', legend=True,
-         legend_kwds={'label': 'Direct Effect Magnitude', 'shrink': 0.7, 'orientation': 'vertical'},
-         edgecolor='black', linewidth=0.3, ax=ax)
+# Keep the original geographic CRS (EPSG:4326) for proper map display
+if gdf.crs is None:
+    gdf.set_crs(epsg=4326, inplace=True)
+elif gdf.crs != "EPSG:4326":
+    gdf = gdf.to_crs(epsg=4326)
 
-ax.set_title("Direct Fiscal-Electoral Effect by Province", fontsize=14, fontweight='bold', pad=15)
-ax.axis('off')
+# Calculate centroids using a projected CRS, then project back to EPSG:4326 degree space
+gdf['centroid'] = gdf.to_crs(epsg=3857).geometry.centroid.to_crs(epsg=4326)
+
+# ============================================================
+# 1. True Choropleth Map (Project Bahura Style Layout)
+# ============================================================
+print("Generating Figure 1: Direct Effect Choropleth Map (Project Bahura Style)...")
+fig, ax = plt.subplots(1, 1, figsize=(9, 11))
+
+# Set clean white background context
+ax.set_facecolor('white')
+
+# Plot the main choropleth map using the matching ColorBrewer RdYlBu diverging profile
+gdf.plot(column='direct_effect', 
+         cmap='RdYlBu_r', 
+         legend=True,
+         legend_kwds={
+             'label': 'Direct Effect Magnitude (higher = more anomalous)', 
+             'shrink': 0.75, 
+             'orientation': 'vertical',
+             'pad': 0.03
+         },
+         edgecolor='black', 
+         linewidth=0.25, 
+         ax=ax,
+         zorder=1)
+
+# Extract and map the exact geographic coordinate paths for centroid overlays
+x_coords = gdf['centroid'].x
+y_coords = gdf['centroid'].y
+ax.scatter(x_coords, y_coords, color='black', s=8, zorder=3, alpha=0.6)
+
+# Mirror explicit framing from Project Bahura
+ax.set_title("Spatial Distribution of Direct Fiscal-Electoral Effects", fontsize=11, fontweight='bold', pad=15)
+ax.set_xlabel("longitude", fontsize=10)
+ax.set_ylabel("Latitude", fontsize=10)
+
+# Set map canvas boundaries to focus clean framing over the Philippine archipelago
+ax.set_xlim(116, 127)
+ax.set_ylim(4, 22)
+
+# Re-enable the structural border frame lines around the plot
+for spine in ax.spines.values():
+    spine.set_visible(True)
+    spine.set_edgecolor('gray')
+    spine.set_linewidth(0.5)
+
 plt.savefig(os.path.join(OUTPUT_DIR, "fig1_direct_effect_map.png"))
 plt.close()
+print("  Saved fig1_direct_effect_map.png")
 
 # ============================================================
 # 2. Top Exporters and Importers (Bar Charts)
@@ -70,17 +113,15 @@ import_df = pd.DataFrame({'province': provinces, 'import': spill_receive}).nlarg
 
 fig, axes = plt.subplots(1, 2, figsize=(14, 6))
 sns.despine()
-
-sns.barplot(data=export_df, x='export', y='province', ax=axes[0], palette="Reds_r")
+sns.barplot(data=export_df, x='export', y='province', ax=axes[0], hue='province', palette="Reds_r", legend=False)
 axes[0].set_title('Top 10 Volatility Exporters', fontweight='bold')
 axes[0].set_xlabel('Spillover Effect (Exported)')
 axes[0].set_ylabel('')
 
-sns.barplot(data=import_df, x='import', y='province', ax=axes[1], palette="Blues_r")
+sns.barplot(data=import_df, x='import', y='province', ax=axes[1], hue='province', palette="Blues_r", legend=False)
 axes[1].set_title('Top 10 Volatility Importers', fontweight='bold')
 axes[1].set_xlabel('Spillover Effect (Received)')
 axes[1].set_ylabel('')
-
 plt.tight_layout()
 plt.savefig(os.path.join(OUTPUT_DIR, "fig2_spillover_bars.png"))
 plt.close()
@@ -95,19 +136,14 @@ for i in range(len(provinces)):
     for j in range(len(provinces)):
         if spill_matrix[i, j] > threshold and i != j:
             G.add_edge(provinces[i], provinces[j], weight=spill_matrix[i, j])
-
-gdf_centroids = gdf.copy()
-gdf_centroids['centroid'] = gdf_centroids.geometry.centroid
-pos = {row['province']: (row['centroid'].x, row['centroid'].y) for _, row in gdf_centroids.iterrows()}
+            
+pos = {row['province']: (row['centroid'].x, row['centroid'].y) for _, row in gdf.iterrows()}
 
 fig, ax = plt.subplots(1, 1, figsize=(12, 12))
-gdf.plot(ax=ax, facecolor='#eaeaea', edgecolor='white', linewidth=0.5)
-
-# Use curved edges (arc3) for better visibility of bidirectional flows
-nx.draw_networkx_nodes(G, pos, node_size=40, node_color='#2c3e50', edgecolors='white', ax=ax)
-nx.draw_networkx_edges(G, pos, edge_color='#e74c3c', alpha=0.7, width=1.2, 
+gdf.plot(ax=ax, facecolor='white', edgecolor='black', linewidth=0.3, alpha=0.5, zorder=1)
+nx.draw_networkx_nodes(G, pos, node_size=40, node_color='black', ax=ax)
+nx.draw_networkx_edges(G, pos, edge_color='red', alpha=0.85, width=1.2,
                        arrows=True, arrowsize=12, connectionstyle="arc3,rad=0.2", ax=ax)
-
 ax.set_title("Directed Spillover Network (Top 5% Strongest Effects)", fontsize=14, fontweight='bold')
 ax.axis('off')
 plt.savefig(os.path.join(OUTPUT_DIR, "fig3_spillover_network.png"))
@@ -117,21 +153,16 @@ plt.close()
 # 4. UMAP of Confounder Embeddings
 # ============================================================
 print("Generating Figure 4: Confounder UMAP...")
-reducer = umap.UMAP(n_components=2, random_state=42, n_neighbors=15)
+reducer = umap.UMAP(n_components=2, random_state=42, n_neighbors=15, n_jobs=1)
 conf_2d = reducer.fit_transform(d_confounder)
-
 fig, ax = plt.subplots(1, 1, figsize=(10, 8))
 scatter = ax.scatter(conf_2d[:, 0], conf_2d[:, 1], c=direct_effect, cmap='coolwarm', s=80, alpha=0.9, edgecolor='k', linewidth=0.5)
 cbar = plt.colorbar(scatter, ax=ax, label='Direct Effect Magnitude')
-
 ax.set_title('Latent Confounder Space (UMAP)', fontweight='bold', pad=15)
 ax.set_xlabel('UMAP Dimension 1')
 ax.set_ylabel('UMAP Dimension 2')
-
-# Add province labels with smart adjustment to prevent overlap
 texts = [ax.text(conf_2d[i, 0], conf_2d[i, 1], prov, fontsize=7) for i, prov in enumerate(provinces)]
-adjust_text(texts, arrowprops=dict(arrowstyle='-', color='gray', lw=0.5), expand_points=(1.2, 1.2))
-
+adjust_text(texts, arrowprops=dict(arrowstyle='-', color='gray', lw=0.5, shrinkA=10), expand_points=(1.2, 1.2))
 sns.despine()
 plt.savefig(os.path.join(OUTPUT_DIR, "fig4_confounder_umap.png"))
 plt.close()
@@ -145,17 +176,15 @@ top20 = gdf.nlargest(20, 'net')['province'].tolist()
 idx_map = {prov: i for i, prov in enumerate(provinces)}
 top_idx = [idx_map[p] for p in top20]
 sub_matrix = spill_matrix[np.ix_(top_idx, top_idx)]
-
 fig, ax = plt.subplots(1, 1, figsize=(10, 8))
-sns.heatmap(sub_matrix, xticklabels=top20, yticklabels=top20, cmap='viridis', 
+sns.heatmap(sub_matrix, xticklabels=top20, yticklabels=top20, cmap='viridis',
             square=True, cbar_kws={"shrink": .8, "label": "Spillover Intensity"}, ax=ax)
-
 ax.set_title('Spillover Matrix (Top 20 Net Exporters)', fontweight='bold', pad=15)
 ax.set_xlabel('Target Province (Importer)')
 ax.set_ylabel('Source Province (Exporter)')
 plt.xticks(rotation=45, ha='right', fontsize=8)
 plt.yticks(rotation=0, fontsize=8)
-
+plt.tight_layout()
 plt.savefig(os.path.join(OUTPUT_DIR, "fig5_spillover_heatmap.png"))
 plt.close()
 
