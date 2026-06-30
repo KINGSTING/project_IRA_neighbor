@@ -1,13 +1,13 @@
 # Fdb version 4
-["pdflatex"] 1781141254.05181 "/home/jemarjohn/Documents/Research/project_IRA_neighbor/manuscript/project_IRA_neighbor.tex" "project_IRA_neighbor.pdf" "project_IRA_neighbor" 1781141257.11668 0
-  "../data/figures/fig1_direct_effect_map.png" 1781138891.03415 238406 fa04cd71b24b00fbf248752593eb0c56 ""
-  "../data/figures/fig2_spillover_bars.png" 1781138891.68341 177433 6ccff0dc90579862998b03a650a8cd83 ""
-  "../data/figures/fig3_spillover_network.png" 1781138893.19827 500082 91fbe0292b527b654e1881167522f8d0 ""
-  "../data/figures/fig4_confounder_umap.png" 1781138902.56737 545893 c7394a35ec6e82539bca42ddefc3039e ""
-  "../data/figures/fig5_spillover_heatmap.png" 1781138903.14659 333440 25e1af3d9b0189ecf61209babff5ab08 ""
+["pdflatex"] 1782800283.18241 "/home/jemarjohn/Documents/Research/project_IRA_neighbor/manuscript/project_IRA_neighbor.tex" "project_IRA_neighbor.pdf" "project_IRA_neighbor" 1782800286.4272 0
+  "../data/figures/fig1_direct_effect_map.png" 1782800267.99721 233057 01903b110f8638f4ac165c9f7cd33bcb ""
+  "../data/figures/fig2_spillover_bars.png" 1782800268.54394 175287 83ebf83e89ebf3855bdbc45ce8f0bb44 ""
+  "../data/figures/fig3_spillover_network.png" 1782800269.95644 491022 74a4e617b7daefeb3f8f6b66874c71f6 ""
+  "../data/figures/fig4_confounder_umap.png" 1782800279.43952 541955 055f531840b943cabdd9b4164c9e5ef9 ""
+  "../data/figures/fig5_spillover_heatmap.png" 1782800280.01544 346138 142d7988869645cb187e1cb5b8620097 ""
   "../data/figures/traversal_METRO_MANILA.png" 1781083155.59023 342500 d8e9a198466cbbae20d49961f7eb3e39 ""
   "/etc/texmf/web2c/texmf.cnf" 1774230397.63028 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/home/jemarjohn/Documents/Research/project_IRA_neighbor/manuscript/project_IRA_neighbor.tex" 1781141250.63808 42204 1fe6937f4d0f972d6240a8a021df4f89 ""
+  "/home/jemarjohn/Documents/Research/project_IRA_neighbor/manuscript/project_IRA_neighbor.tex" 1781141420.16371 42204 1fe6937f4d0f972d6240a8a021df4f89 ""
   "/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/adobe/times/ptmb7t.tfm" 1136768653 2172 fd0c924230362ff848a33632ed45dc23 ""
@@ -210,9 +210,9 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1707919699 40399 f2c302f7d2af602abb742093540a5834 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1774230416.1899 5472669 54eaf61a88b6b7896ebd0dac973cb29c ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1774230515 8214686 ef281dd011a452183b355662515100ad ""
-  "project_IRA_neighbor.aux" 1781141257.03467 10612 2e6d458a635e28df87a1c83ef05bdb25 "pdflatex"
-  "project_IRA_neighbor.out" 1781141257.03518 5065 7cec8f80bd46203e295ae6dfaf890c3a "pdflatex"
-  "project_IRA_neighbor.tex" 1781141250.63808 42204 1fe6937f4d0f972d6240a8a021df4f89 ""
+  "project_IRA_neighbor.aux" 1782800286.33557 10612 2e6d458a635e28df87a1c83ef05bdb25 "pdflatex"
+  "project_IRA_neighbor.out" 1782800286.33657 5065 7cec8f80bd46203e295ae6dfaf890c3a "pdflatex"
+  "project_IRA_neighbor.tex" 1781141420.16371 42204 1fe6937f4d0f972d6240a8a021df4f89 ""
   (generated)
   "project_IRA_neighbor.aux"
   "project_IRA_neighbor.log"

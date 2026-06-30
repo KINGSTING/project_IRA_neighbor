@@ -188,4 +188,52 @@ plt.tight_layout()
 plt.savefig(os.path.join(OUTPUT_DIR, "fig5_spillover_heatmap.png"))
 plt.close()
 
+# ============================================================
+# 6. Placebo Test Histogram (Figure 8)
+# ============================================================
+print("Generating Figure 8: Placebo Test Histograms...")
+
+# Load placebo results
+placebo_path = os.path.join(DATA_DIR, "placebo_results.npz")
+if os.path.exists(placebo_path):
+    placebo_data = np.load(placebo_path, allow_pickle=True)
+    placebo_means = placebo_data['placebo_means']
+    placebo_manila = placebo_data['placebo_manila']
+    true_mean_abs = placebo_data['true_mean_abs']
+    true_manila_bulacan = placebo_data['true_manila_bulacan']
+    ci_mean = placebo_data['ci_mean']
+    ci_manila = placebo_data['ci_manila']
+    
+    # Create two-panel figure
+    fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+    
+    # Panel 1: Mean absolute spillover
+    ax1 = axes[0]
+    ax1.hist(placebo_means, bins=10, color='lightgray', edgecolor='black', alpha=0.7)
+    ax1.axvline(true_mean_abs, color='red', linestyle='--', linewidth=2, label=f'True = {true_mean_abs:.3f}')
+    ax1.axvline(ci_mean[0], color='gray', linestyle=':', linewidth=1, alpha=0.5)
+    ax1.axvline(ci_mean[1], color='gray', linestyle=':', linewidth=1, alpha=0.5)
+    ax1.set_xlabel('Mean Absolute Spillover Magnitude')
+    ax1.set_ylabel('Frequency')
+    ax1.set_title('(a) Average Spillover', fontweight='bold')
+    ax1.legend()
+    
+    # Panel 2: Manila → Bulacan spillover
+    ax2 = axes[1]
+    ax2.hist(placebo_manila, bins=10, color='lightgray', edgecolor='black', alpha=0.7)
+    ax2.axvline(true_manila_bulacan, color='red', linestyle='--', linewidth=2, label=f'True = {true_manila_bulacan:.3f}')
+    ax2.axvline(ci_manila[0], color='gray', linestyle=':', linewidth=1, alpha=0.5)
+    ax2.axvline(ci_manila[1], color='gray', linestyle=':', linewidth=1, alpha=0.5)
+    ax2.set_xlabel('Spillover Magnitude (Manila → Bulacan)')
+    ax2.set_ylabel('Frequency')
+    ax2.set_title('(b) Headline Asymmetric Link', fontweight='bold')
+    ax2.legend()
+    
+    plt.tight_layout()
+    plt.savefig(os.path.join(OUTPUT_DIR, "fig8_placebo_histogram.png"))
+    plt.close()
+    print("  Saved fig8_placebo_histogram.png")
+else:
+    print("  Placebo results not found; skipping Figure 8.")
+
 print("All publication-ready figures generated successfully.")
